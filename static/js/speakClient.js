@@ -78,12 +78,21 @@ function speak(text, args) {
     }
   }
 
+  if (args && args.callback) {
+    var callback = args.callback;
+    delete args['callback'];
+  } else {
+    var callback = null;
+  }
   function handleWav(wav) {
     var startTime = Date.now();
     var data = parseWav(wav); // validate the data and parse it
     // TODO: try playAudioDataAPI(data), and fallback if failed
     playHTMLAudioElement(wav);
     if (PROFILE) console.log('speak.js: wav processing took ' + (Date.now()-startTime).toFixed(2) + ' ms');
+    if (callback) {
+      callback()
+    }
   }
 
   if (args && args.noWorker) {
