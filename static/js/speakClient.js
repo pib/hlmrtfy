@@ -8,6 +8,13 @@ try {
 function speak(text, args) {
   var PROFILE = 1;
 
+  if (args && args.callback) {
+    var callback = args.callback;
+    delete args['callback'];
+  } else {
+    var callback = null;
+  }
+
   function parseWav(wav) {
     function readInt(i, bytes) {
       var ret = 0;
@@ -56,7 +63,11 @@ function speak(text, args) {
     }
 
     document.getElementById("audio").innerHTML=("<audio id=\"player\" src=\"data:audio/x-wav;base64,"+encode64(wav)+"\">");
-    document.getElementById("player").play();
+    var player = document.getElementById("player");
+    if (callback) {
+	player.addEventListener('ended', callback);
+    }
+    player.play();
   }
 
   function playAudioDataAPI(data) {
@@ -78,21 +89,12 @@ function speak(text, args) {
     }
   }
 
-  if (args && args.callback) {
-    var callback = args.callback;
-    delete args['callback'];
-  } else {
-    var callback = null;
-  }
   function handleWav(wav) {
     var startTime = Date.now();
     var data = parseWav(wav); // validate the data and parse it
     // TODO: try playAudioDataAPI(data), and fallback if failed
     playHTMLAudioElement(wav);
     if (PROFILE) console.log('speak.js: wav processing took ' + (Date.now()-startTime).toFixed(2) + ' ms');
-    if (callback) {
-      callback()
-    }
   }
 
   if (args && args.noWorker) {

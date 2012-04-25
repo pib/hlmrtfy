@@ -2,7 +2,13 @@ jQuery(function($) {
     //speak("Yo dawg, I heard you like text-to-speech, so I'm working on this site that will read other sites for you.");
 
     function got_lines(lines) {
-        speak(lines[0])
+	function read_next_line() {
+	    if (lines.length) {
+		var line = lines.shift();
+		speak(line, {callback: read_next_line});
+	    }
+	}
+	read_next_line();
     }
 
     function read_error(xhr, status, http_error) {
