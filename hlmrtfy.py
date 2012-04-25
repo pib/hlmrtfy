@@ -34,7 +34,7 @@ def extract_text(html):
             sub_chunk = sub_chunk.strip()
             if not sub_chunk:
                 continue
-            chunks.append('{}.'.format(sub_chunk))
+            chunks.append('%s.' % sub_chunk)
     return chunks
     
 
